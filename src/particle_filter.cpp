@@ -30,7 +30,7 @@ void ParticleFilter::init(double x, double y, double theta, double std[]) {
    * NOTE: Consult particle_filter.h for more information about this method 
    *   (and others in this file).
    */
-  num_particles = 1000;  // TODO: Set the number of particles
+  num_particles = 100;  // TODO: Set the number of particles
   
   std::default_random_engine gen;
   
@@ -72,8 +72,8 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
     // use different formulas depending on whether yaw_rate is 0 or not
     if(yaw_rate == 0)
   	{
-      new_x = particles[i].x + velocity * cos(particles[i].theta);
-      new_y = particles[i].y + velocity * sin(particles[i].theta);
+      new_x = particles[i].x + velocity * delta_t * cos(particles[i].theta);
+      new_y = particles[i].y + velocity * delta_t * sin(particles[i].theta);
       new_theta = particles[i].theta;
   	}
     else
@@ -93,7 +93,7 @@ void ParticleFilter::prediction(double delta_t, double std_pos[],
     
   }
   
-   std::cout << "predicted[0], x: " << particles[0].x << ", y: " << particles[0].y << std::endl;
+   //std::cout << "predicted[0], x: " << particles[0].x << ", y: " << particles[0].y << std::endl;
 
 }
 
@@ -151,7 +151,7 @@ void ParticleFilter::updateWeights(double sensor_range, double std_landmark[],
       	}
       }
       
-      // compute weight
+      // compute weight only if valid landmark association found
       if(nearest_landmark > 0){
       	double obs_weight = multiv_prob(std_landmark[0], std_landmark[1], new_obs.x, new_obs.y, map_landmarks.landmark_list[nearest_landmark - 1].x_f, 
       							map_landmarks.landmark_list[nearest_landmark - 1].y_f);
